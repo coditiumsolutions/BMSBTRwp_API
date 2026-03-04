@@ -1,0 +1,15 @@
+## .NET
+bin/
+obj/
+*.user
+
+## Visual Studio
+.vs/
+
+## User-specific
+*.suo
+*.rsuser
+
+## Build results
+[Dd]ebug/
+[Rr]elease/

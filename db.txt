@@ -1,0 +1,43 @@
+================================================================================
+  DATABASE SCHEMA — BMSBTRwp
+  Server: 172.20.229.2
+================================================================================
+
+
+────────────────────────────────────────────────────────────────────────────────
+  TABLE: dbo.MeterReadings                                     (27 columns)
+────────────────────────────────────────────────────────────────────────────────
+
+  #   Column Name          Data Type        Max Length   Nullable   Default
+  ─── ──────────────────── ──────────────── ────────── ────────── ─────────
+   1  Uid                  int              —            NO         —
+   2  SerialNo             int              —            YES        —
+   3  ReferenceNo          varchar          20           NO         —
+   4  HouseNo              varchar          50           YES        —
+   5  StreetNo             varchar          50           YES        —
+   6  ConsumerName         varchar          150          YES        —
+   7  MeterNo              varchar          50           YES        —
+   8  MeterType            varchar          50           YES        —
+   9  PreviousReading      int              —            YES        —
+  10  PreviousPeak         int              —            YES        —
+  11  PreviousOffPeak      int              —            YES        —
+  12  PreviousLoad         decimal          —            YES        —
+  13  PresentReading       int              —            YES        —
+  14  PresentPeak          int              —            YES        —
+  15  PresentOffPeak       int              —            YES        —
+  16  PresentLoad          decimal          —            YES        —
+  17  TotalDifference      int              —            YES        —
+  18  Status               varchar          50           YES        —
+  19  PicPeakImport        varchar          255          YES        —
+  20  PicOffPeakImport     varchar          255          YES        —
+  21  PicSolorExport       varchar          255          YES        —
+  22  PicMDILoad           varchar          255          YES        —
+  23  MeterStatus          varchar          50           YES        —
+  24  ReadingBy            varchar          100          YES        —
+  25  ReadingOn            datetime         —            YES        —
+  26  BillingMonth         varchar          20           YES        —
+  27  BillingYear          varchar          10           YES        —
+
+================================================================================
+  Total Tables: 1  |  Total Columns: 27
+================================================================================
