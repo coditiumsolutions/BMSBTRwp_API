@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Operators CRUD</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body { font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; margin: 20px; background: #f5f5f7; }
+    h1 { margin-bottom: 0.5rem; }
+    .subtitle { color: #555; margin-bottom: 1.5rem; }
+    table { border-collapse: collapse; width: 100%; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+    th, td { padding: 8px 10px; border-bottom: 1px solid #ddd; font-size: 14px; }
+    th { background: #fafafa; text-align: left; }
+    tr:hover { background: #f0f7ff; }
+    .actions button { margin-right: 4px; }
+    form { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px 16px; margin-bottom: 16px; }
+    label { font-size: 12px; color: #555; display: block; margin-bottom: 2px; }
+    input, select { width: 100%; padding: 6px 8px; font-size: 14px; box-sizing: border-box; }
+    .form-row { display: flex; flex-direction: column; }
+    .form-actions { grid-column: 1 / -1; margin-top: 8px; }
+    button { padding: 6px 10px; font-size: 14px; cursor: pointer; }
+    .primary { background: #2563eb; color: white; border: none; border-radius: 3px; }
+    .danger { background: #dc2626; color: white; border: none; border-radius: 3px; }
+    .secondary { background: #e5e7eb; border: none; border-radius: 3px; }
+    .badge { display: inline-block; padding: 2px 6px; border-radius: 999px; font-size: 11px; }
+    .badge-yes { background: #d1fae5; color: #065f46; }
+    .badge-no { background: #fee2e2; color: #991b1b; }
+    .status { margin-bottom: 10px; font-size: 13px; }
+    .status.error { color: #b91c1c; }
+    .status.success { color: #166534; }
+    .status.info { color: #0369a1; }
+  </style>
+</head>
+<body>
+  <h1>Operators CRUD</h1>
+  <div class="subtitle">
+    Simple web interface that uses your <code>/api/operators</code> endpoints for CRUD.
+  </div>
+
+  <div id="status" class="status info">Loading operators...</div>
+
+  <form id="operator-form">
+    <input type="hidden" id="op-id" />
+
+    <div class="form-row">
+      <label for="op-name">Name *</label>
+      <input id="op-name" required />
+    </div>
+
+    <div class="form-row">
+      <label for="op-project">Project</label>
+      <input id="op-project" />
+    </div>
+
+    <div class="form-row">
+      <label for="op-email">Email</label>
+      <input id="op-email" type="email" />
+    </div>
+
+    <div class="form-row">
+      <label for="op-username">Username</label>
+      <input id="op-username" />
+    </div>
+
+    <div class="form-row">
+      <label for="op-password">Password</label>
+      <input id="op-password" type="password" />
+    </div>
+
+    <div class="form-row">
+      <label for="op-role">Role</label>
+      <input id="op-role" />
+    </div>
+
+    <div class="form-row">
+      <label for="op-active">Is Active</label>
+      <select id="op-active">
+        <option value="">(null)</option>
+        <option value="true">True</option>
+        <option value="false">False</option>
+      </select>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="primary" id="save-btn">Create</button>
+      <button type="button" class="secondary" id="reset-btn">Reset form</button>
+    </div>
+  </form>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Id</th>
+        <th>Name</th>
+        <th>Project</th>
+        <th>Email</th>
+        <th>Username</th>
+        <th>Role</th>
+        <th>Active</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody id="operators-body"></tbody>
+  </table>
+
+  <script>
+    const apiBase = window.location.origin + "/api/operators";
+
+    const statusEl = document.getElementById("status");
+    const tbody = document.getElementById("operators-body");
+
+    const form = document.getElementById("operator-form");
+    const idInput = document.getElementById("op-id");
+    const nameInput = document.getElementById("op-name");
+    const projectInput = document.getElementById("op-project");
+    const emailInput = document.getElementById("op-email");
+    const usernameInput = document.getElementById("op-username");
+    const passwordInput = document.getElementById("op-password");
+    const roleInput = document.getElementById("op-role");
+    const activeSelect = document.getElementById("op-active");
+    const saveBtn = document.getElementById("save-btn");
+    const resetBtn = document.getElementById("reset-btn");
+
+    function setStatus(msg, type = "info") {
+      statusEl.textContent = msg;
+      statusEl.className = "status " + type;
+    }
+
+    async function loadOperators() {
+      setStatus("Loading operators...", "info");
+      try {
+        const res = await fetch(apiBase);
+        if (!res.ok) {
+          throw new Error("HTTP " + res.status);
+        }
+        const data = await res.json();
+        renderTable(data);
+        setStatus("Loaded " + data.length + " operators.", "success");
+      } catch (err) {
+        console.error(err);
+        setStatus("Failed to load operators: " + err.message, "error");
+      }
+    }
+
+    function renderTable(items) {
+      tbody.innerHTML = "";
+      if (!items || !items.length) {
+        const tr = document.createElement("tr");
+        const td = document.createElement("td");
+        td.colSpan = 8;
+        td.textContent = "No operators found.";
+        tr.appendChild(td);
+        tbody.appendChild(tr);
+        return;
+      }
+
+      for (const op of items) {
+        const tr = document.createElement("tr");
+
+        tr.innerHTML = `
+          <td>${op.id}</td>
+          <td>${op.name ?? ""}</td>
+          <td>${op.project ?? ""}</td>
+          <td>${op.email ?? ""}</td>
+          <td>${op.username ?? ""}</td>
+          <td>${op.role ?? ""}</td>
+          <td>
+            ${op.isActive === null || op.isActive === undefined
+              ? '<span class="badge badge-no">null</span>'
+              : op.isActive
+                ? '<span class="badge badge-yes">true</span>'
+                : '<span class="badge badge-no">false</span>'}
+          </td>
+          <td class="actions"></td>
+        `;
+
+        const actionsTd = tr.querySelector(".actions");
+
+        const editBtn = document.createElement("button");
+        editBtn.textContent = "Edit";
+        editBtn.className = "secondary";
+        editBtn.onclick = () => fillFormForEdit(op);
+
+        const delBtn = document.createElement("button");
+        delBtn.textContent = "Delete";
+        delBtn.className = "danger";
+        delBtn.onclick = () => deleteOperator(op.id);
+
+        actionsTd.appendChild(editBtn);
+        actionsTd.appendChild(delBtn);
+
+        tbody.appendChild(tr);
+      }
+    }
+
+    function clearForm() {
+      idInput.value = "";
+      nameInput.value = "";
+      projectInput.value = "";
+      emailInput.value = "";
+      usernameInput.value = "";
+      passwordInput.value = "";
+      roleInput.value = "";
+      activeSelect.value = "";
+      saveBtn.textContent = "Create";
+    }
+
+    function fillFormForEdit(op) {
+      idInput.value = op.id;
+      nameInput.value = op.name ?? "";
+      projectInput.value = op.project ?? "";
+      emailInput.value = op.email ?? "";
+      usernameInput.value = op.username ?? "";
+      passwordInput.value = op.password ?? "";
+      roleInput.value = op.role ?? "";
+      if (op.isActive === null || op.isActive === undefined) {
+        activeSelect.value = "";
+      } else if (op.isActive === true) {
+        activeSelect.value = "true";
+      } else {
+        activeSelect.value = "false";
+      }
+      saveBtn.textContent = "Update";
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    async function deleteOperator(id) {
+      if (!confirm("Delete operator #" + id + "?")) return;
+      try {
+        setStatus("Deleting operator #" + id + "...", "info");
+        const res = await fetch(apiBase + "/" + id, { method: "DELETE" });
+        if (!res.ok && res.status !== 204) {
+          throw new Error("HTTP " + res.status);
+        }
+        setStatus("Deleted operator #" + id + ".", "success");
+        await loadOperators();
+      } catch (err) {
+        console.error(err);
+        setStatus("Failed to delete operator: " + err.message, "error");
+      }
+    }
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const payload = {
+        name: nameInput.value.trim(),
+        project: projectInput.value.trim() || null,
+        email: emailInput.value.trim() || null,
+        username: usernameInput.value.trim() || null,
+        password: passwordInput.value || null,
+        role: roleInput.value.trim() || null,
+        isActive:
+          activeSelect.value === ""
+            ? null
+            : activeSelect.value === "true"
+              ? true
+              : false,
+      };
+
+      const id = idInput.value;
+      const isEdit = !!id;
+
+      try {
+        setStatus((isEdit ? "Updating" : "Creating") + " operator...", "info");
+        const res = await fetch(isEdit ? apiBase + "/" + id : apiBase, {
+          method: isEdit ? "PUT" : "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+
+        if (!res.ok && res.status !== 204) {
+          const text = await res.text();
+          throw new Error("HTTP " + res.status + " - " + text);
+        }
+
+        setStatus(isEdit ? "Updated operator." : "Created operator.", "success");
+        clearForm();
+        await loadOperators();
+      } catch (err) {
+        console.error(err);
+        setStatus("Failed to save operator: " + err.message, "error");
+      }
+    });
+
+    resetBtn.addEventListener("click", () => {
+      clearForm();
+      setStatus("Form reset.", "info");
+    });
+
+    // Initial load
+    clearForm();
+    loadOperators();
+  </script>
+</body>
+</html>
+

@@ -5,7 +5,7 @@
 
 
 ────────────────────────────────────────────────────────────────────────────────
-  TABLE: dbo.MeterReadings                                     (27 columns)
+  TABLE: dbo.MeterReadings                                     (28 columns)
 ────────────────────────────────────────────────────────────────────────────────
 
   #   Column Name          Data Type        Max Length   Nullable   Default
@@ -37,7 +37,26 @@
   25  ReadingOn            datetime         —            YES        —
   26  BillingMonth         varchar          20           YES        —
   27  BillingYear          varchar          10           YES        —
+  28  Project              varchar          100          YES        —
+
+
+────────────────────────────────────────────────────────────────────────────────
+  TABLE: dbo.Operators                                         (8 columns)
+────────────────────────────────────────────────────────────────────────────────
+
+  #   Column Name          Data Type        Max Length   Nullable   Default
+  ─── ──────────────────── ──────────────── ────────── ────────── ─────────
+   1  Id                   int              —            NO         —
+   2  Name                 nvarchar         100          NO         —
+   3  Project              nvarchar         50           YES        ('Phase 1To6')
+   4  Email                nvarchar         150          YES        ('')
+   5  Username             nvarchar         50           YES        —
+   6  Password             nvarchar         100          YES        —
+   7  Role                 nvarchar         20           YES        ('Operator')
+   8  IsActive             bit              —            YES        ((1))
+
 
 ================================================================================
-  Total Tables: 1  |  Total Columns: 27
+  Total Tables: 2  |  Total Columns: 36
 ================================================================================
+

@@ -11,6 +11,7 @@ builder.Services.AddSwaggerGen();
 // Register custom services
 builder.Services.AddSingleton<DbTextFileService>();
 builder.Services.AddSingleton<DataFetchService>();
+builder.Services.AddScoped<OperatorsRepository>();
 
 // ─── CORS ────────────────────────────────────────────────────────────────────
 // Allow React Native (and any mobile/web client) to call this API.
@@ -33,6 +34,7 @@ app.UseSwagger();
 app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
+app.UseStaticFiles();
 app.UseCors("AllowAll");
 app.UseAuthorization();
 app.MapControllers();
