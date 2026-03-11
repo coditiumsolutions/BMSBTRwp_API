@@ -12,6 +12,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<DbTextFileService>();
 builder.Services.AddSingleton<DataFetchService>();
 builder.Services.AddScoped<OperatorsRepository>();
+builder.Services.AddScoped<MeterReadingsStatsService>();
+builder.Services.AddScoped<MultiValueConfigurationsRepository>();
 
 // ─── CORS ────────────────────────────────────────────────────────────────────
 // Allow React Native (and any mobile/web client) to call this API.
@@ -34,6 +36,7 @@ app.UseSwagger();
 app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
+app.UseDefaultFiles();
 app.UseStaticFiles();
 app.UseCors("AllowAll");
 app.UseAuthorization();

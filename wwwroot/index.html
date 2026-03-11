@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>BMSBTRwp Admin Home</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg: #f9fafb;
+      --card: #ffffff;
+      --card-border: #e5e7eb;
+      --accent: #2563eb;
+      --accent-soft: #eff6ff;
+      --text: #111827;
+      --muted: #6b7280;
+      --danger: #dc2626;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
+      padding: 24px;
+    }
+    .shell {
+      width: 100%;
+      max-width: 1120px;
+      border-radius: 16px;
+      border: 1px solid var(--card-border);
+      background: #ffffff;
+      box-shadow:
+        0 18px 40px rgba(15, 23, 42, 0.12),
+        0 0 0 1px rgba(15, 23, 42, 0.02);
+      padding: 20px 22px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+    .title-block h1 {
+      font-size: 20px;
+      margin: 0 0 2px;
+    }
+    .title-block p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .badge {
+      font-size: 11px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid #d1d5db;
+      color: var(--muted);
+      background: #f9fafb;
+    }
+    .tabs {
+      display: flex;
+      border-bottom: 1px solid #e5e7eb;
+      margin-top: 4px;
+      gap: 4px;
+      flex-wrap: wrap;
+    }
+    .tab {
+      border: none;
+      background: transparent;
+      padding: 7px 13px;
+      font-size: 13px;
+      cursor: pointer;
+      border-radius: 999px 999px 0 0;
+      color: var(--muted);
+    }
+    .tab.active {
+      color: var(--text);
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      border-bottom-color: #ffffff;
+    }
+    .tab span {
+      font-size: 11px;
+      margin-left: 4px;
+      padding: 1px 7px;
+      border-radius: 999px;
+      background: #eff6ff;
+      color: #1d4ed8;
+    }
+    .content {
+      padding-top: 8px;
+      display: none;
+    }
+    .content.active {
+      display: block;
+    }
+    .status {
+      font-size: 12px;
+      margin-bottom: 8px;
+      color: var(--muted);
+    }
+    .status.error { color: var(--danger); }
+    .status.success { color: #15803d; }
+    .status.info { color: #0369a1; }
+    form {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px 14px;
+      margin-bottom: 10px;
+      align-items: flex-end;
+    }
+    .form-row {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    label {
+      font-size: 12px;
+      color: var(--muted);
+    }
+    input, select {
+      padding: 6px 8px;
+      border-radius: 6px;
+      border: 1px solid #d1d5db;
+      font-size: 13px;
+    }
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.3);
+    }
+    .form-actions {
+      grid-column: 1 / -1;
+      display: flex;
+      gap: 6px;
+      margin-top: 4px;
+    }
+    button {
+      padding: 6px 10px;
+      font-size: 13px;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+    }
+    .primary {
+      background: var(--accent);
+      color: #ffffff;
+    }
+    .secondary {
+      background: #e5e7eb;
+      color: #111827;
+    }
+    .danger {
+      background: var(--danger);
+      color: #ffffff;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      background: #ffffff;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid #e5e7eb;
+    }
+    th, td {
+      padding: 7px 8px;
+      border-bottom: 1px solid #e5e7eb;
+      font-size: 12px;
+    }
+    th {
+      background: #f9fafb;
+      text-align: left;
+      font-weight: 500;
+      color: #4b5563;
+    }
+    tr:hover td {
+      background: #f3f4f6;
+    }
+    .actions button {
+      margin-right: 4px;
+    }
+    .badge-pill {
+      display: inline-block;
+      padding: 2px 7px;
+      border-radius: 999px;
+      font-size: 11px;
+      background: #e5e7eb;
+      color: #374151;
+    }
+    .pager {
+      margin-top: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .pager button {
+      padding: 4px 8px;
+      font-size: 12px;
+      border-radius: 999px;
+      border: 1px solid #d1d5db;
+      background: #f9fafb;
+      cursor: pointer;
+    }
+    @media (max-width: 720px) {
+      body { padding: 12px; }
+      .shell { padding: 14px 12px 12px; }
+      form { grid-template-columns: repeat(2, minmax(0,1fr)); }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header class="header">
+      <div class="title-block">
+        <h1>BMSBTRwp Admin Home</h1>
+        <p>Use the tabs to view or edit data from each table.</p>
+      </div>
+      <div class="badge">Web API · SQL Server · db.txt</div>
+    </header>
+
+    <nav class="tabs">
+      <button class="tab active" data-tab="operators">Operators <span>CRUD</span></button>
+      <button class="tab" data-tab="meter">MeterReadings <span>View</span></button>
+      <button class="tab" data-tab="multivalue">MultiValueConfigs <span>View</span></button>
+    </nav>
+
+    <!-- Operators CRUD (full form + grid) -->
+    <section id="tab-operators" class="content active">
+      <div id="ops-status" class="status info">Loading operators...</div>
+
+      <form id="ops-form">
+        <input type="hidden" id="ops-id" />
+
+        <div class="form-row">
+          <label for="ops-name">Name *</label>
+          <input id="ops-name" required />
+        </div>
+
+        <div class="form-row">
+          <label for="ops-project">Project</label>
+          <input id="ops-project" />
+        </div>
+
+        <div class="form-row">
+          <label for="ops-email">Email</label>
+          <input id="ops-email" type="email" />
+        </div>
+
+        <div class="form-row">
+          <label for="ops-username">Username</label>
+          <input id="ops-username" />
+        </div>
+
+        <div class="form-row">
+          <label for="ops-password">Password</label>
+          <input id="ops-password" type="password" />
+        </div>
+
+        <div class="form-row">
+          <label for="ops-role">Role</label>
+          <input id="ops-role" />
+        </div>
+
+        <div class="form-row">
+          <label for="ops-active">Is Active</label>
+          <select id="ops-active">
+            <option value="">(null)</option>
+            <option value="true">True</option>
+            <option value="false">False</option>
+          </select>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="primary" id="ops-save-btn">Create</button>
+          <button type="button" class="secondary" id="ops-reset-btn">Reset form</button>
+        </div>
+      </form>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Project</th>
+            <th>Email</th>
+            <th>Username</th>
+            <th>Role</th>
+            <th>Active</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="ops-body"></tbody>
+      </table>
+    </section>
+
+    <!-- MeterReadings view (paged grid, read-only via existing API) -->
+    <section id="tab-meter" class="content">
+      <div id="meter-status" class="status info">Use Next/Prev to page through meter readings.</div>
+      <table>
+        <thead>
+          <tr>
+            <th>Uid</th>
+            <th>ReferenceNo</th>
+            <th>ConsumerName</th>
+            <th>MeterNo</th>
+            <th>BillingMonth</th>
+            <th>BillingYear</th>
+            <th>Project</th>
+          </tr>
+        </thead>
+        <tbody id="meter-body"></tbody>
+      </table>
+      <div class="pager">
+        <div>
+          <button id="meter-prev">&laquo; Prev</button>
+          <button id="meter-next">Next &raquo;</button>
+        </div>
+        <div id="meter-page-label">Page 1</div>
+      </div>
+    </section>
+
+    <!-- MultiValueConfigurations view (form + grid using existing API) -->
+    <section id="tab-multivalue" class="content">
+      <div id="mv-status" class="status info">Loading configuration entries...</div>
+
+      <form id="mv-form">
+        <div class="form-row">
+          <label for="mv-key">Config Key *</label>
+          <input id="mv-key" required />
+        </div>
+        <div class="form-row" style="grid-column: span 2;">
+          <label for="mv-value">Config Value *</label>
+          <input id="mv-value" required />
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="primary" id="mv-save-btn">Add Config</button>
+          <button type="button" class="secondary" id="mv-reset-btn">Reset form</button>
+        </div>
+      </form>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Uid</th>
+            <th>ConfigKey</th>
+            <th>ConfigValue</th>
+          </tr>
+        </thead>
+        <tbody id="mv-body"></tbody>
+      </table>
+    </section>
+  </main>
+
+  <script>
+    const originBase = window.location.origin;
+
+    // ─── Tabs ────────────────────────────────────────────────────────────────
+    const tabs = document.querySelectorAll(".tab");
+    const contents = document.querySelectorAll(".content");
+
+    tabs.forEach(tab => {
+      tab.addEventListener("click", () => {
+        tabs.forEach(t => t.classList.remove("active"));
+        contents.forEach(c => c.classList.remove("active"));
+        tab.classList.add("active");
+        document.getElementById("tab-" + tab.dataset.tab).classList.add("active");
+      });
+    });
+
+    // ─── Operators CRUD (uses /api/operators) ───────────────────────────────
+    const opsApi = originBase + "/api/operators";
+    const opsStatusEl = document.getElementById("ops-status");
+    const opsBody = document.getElementById("ops-body");
+    const opsForm = document.getElementById("ops-form");
+    const opsId = document.getElementById("ops-id");
+    const opsName = document.getElementById("ops-name");
+    const opsProject = document.getElementById("ops-project");
+    const opsEmail = document.getElementById("ops-email");
+    const opsUsername = document.getElementById("ops-username");
+    const opsPassword = document.getElementById("ops-password");
+    const opsRole = document.getElementById("ops-role");
+    const opsActive = document.getElementById("ops-active");
+    const opsSaveBtn = document.getElementById("ops-save-btn");
+    const opsResetBtn = document.getElementById("ops-reset-btn");
+
+    function setOpsStatus(msg, type = "info") {
+      opsStatusEl.textContent = msg;
+      opsStatusEl.className = "status " + type;
+    }
+
+    function clearOpsForm() {
+      opsId.value = "";
+      opsName.value = "";
+      opsProject.value = "";
+      opsEmail.value = "";
+      opsUsername.value = "";
+      opsPassword.value = "";
+      opsRole.value = "";
+      opsActive.value = "";
+      opsSaveBtn.textContent = "Create";
+    }
+
+    function fillOpsForm(op) {
+      opsId.value = op.id;
+      opsName.value = op.name ?? "";
+      opsProject.value = op.project ?? "";
+      opsEmail.value = op.email ?? "";
+      opsUsername.value = op.username ?? "";
+      opsPassword.value = op.password ?? "";
+      opsRole.value = op.role ?? "";
+      if (op.isActive === null || op.isActive === undefined) {
+        opsActive.value = "";
+      } else if (op.isActive === true) {
+        opsActive.value = "true";
+      } else {
+        opsActive.value = "false";
+      }
+      opsSaveBtn.textContent = "Update";
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    async function loadOps() {
+      setOpsStatus("Loading operators...", "info");
+      try {
+        const res = await fetch(opsApi);
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        const data = await res.json();
+        opsBody.innerHTML = "";
+        if (!data.length) {
+          const tr = document.createElement("tr");
+          const td = document.createElement("td");
+          td.colSpan = 8;
+          td.textContent = "No operators found.";
+          tr.appendChild(td);
+          opsBody.appendChild(tr);
+        } else {
+          data.forEach(op => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+              <td>${op.id}</td>
+              <td>${op.name ?? ""}</td>
+              <td>${op.project ?? ""}</td>
+              <td>${op.email ?? ""}</td>
+              <td>${op.username ?? ""}</td>
+              <td>${op.role ?? ""}</td>
+              <td>
+                ${op.isActive === null || op.isActive === undefined
+                  ? '<span class="badge-pill">null</span>'
+                  : op.isActive
+                    ? '<span class="badge-pill">true</span>'
+                    : '<span class="badge-pill">false</span>'}
+              </td>
+              <td class="actions"></td>
+            `;
+            const actionsTd = tr.querySelector(".actions");
+            const editBtn = document.createElement("button");
+            editBtn.className = "secondary";
+            editBtn.textContent = "Edit";
+            editBtn.onclick = () => fillOpsForm(op);
+            const delBtn = document.createElement("button");
+            delBtn.className = "danger";
+            delBtn.textContent = "Delete";
+            delBtn.onclick = () => deleteOps(op.id);
+            actionsTd.appendChild(editBtn);
+            actionsTd.appendChild(delBtn);
+            opsBody.appendChild(tr);
+          });
+        }
+        setOpsStatus("Loaded " + data.length + " operators.", "success");
+      } catch (err) {
+        console.error(err);
+        setOpsStatus("Failed to load operators: " + err.message, "error");
+      }
+    }
+
+    async function deleteOps(id) {
+      if (!confirm("Delete operator #" + id + "?")) return;
+      try {
+        setOpsStatus("Deleting operator #" + id + "...", "info");
+        const res = await fetch(opsApi + "/" + id, { method: "DELETE" });
+        if (!res.ok && res.status !== 204) throw new Error("HTTP " + res.status);
+        setOpsStatus("Deleted operator #" + id + ".", "success");
+        await loadOps();
+      } catch (err) {
+        console.error(err);
+        setOpsStatus("Failed to delete operator: " + err.message, "error");
+      }
+    }
+
+    opsForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const payload = {
+        name: opsName.value.trim(),
+        project: opsProject.value.trim() || null,
+        email: opsEmail.value.trim() || null,
+        username: opsUsername.value.trim() || null,
+        password: opsPassword.value || null,
+        role: opsRole.value.trim() || null,
+        isActive:
+          opsActive.value === "" ? null : opsActive.value === "true"
+            ? true
+            : false
+      };
+      const id = opsId.value;
+      const isEdit = !!id;
+      try {
+        setOpsStatus((isEdit ? "Updating" : "Creating") + " operator...", "info");
+        const res = await fetch(isEdit ? opsApi + "/" + id : opsApi, {
+          method: isEdit ? "PUT" : "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        if (!res.ok && res.status !== 204) {
+          const text = await res.text();
+          throw new Error("HTTP " + res.status + " - " + text);
+        }
+        setOpsStatus(isEdit ? "Updated operator." : "Created operator.", "success");
+        clearOpsForm();
+        await loadOps();
+      } catch (err) {
+        console.error(err);
+        setOpsStatus("Failed to save operator: " + err.message, "error");
+      }
+    });
+
+    opsResetBtn.addEventListener("click", () => {
+      clearOpsForm();
+      setOpsStatus("Form reset.", "info");
+    });
+
+    // ─── MeterReadings view (uses /api/data/MeterReadings) ──────────────────
+    const meterApiBase = originBase + "/api/data/MeterReadings";
+    const meterStatus = document.getElementById("meter-status");
+    const meterBody = document.getElementById("meter-body");
+    const meterPrev = document.getElementById("meter-prev");
+    const meterNext = document.getElementById("meter-next");
+    const meterPageLabel = document.getElementById("meter-page-label");
+    let meterPage = 1;
+    const meterPageSize = 50;
+
+    function setMeterStatus(msg, type = "info") {
+      meterStatus.textContent = msg;
+      meterStatus.className = "status " + type;
+    }
+
+    async function loadMeter() {
+      setMeterStatus("Loading meter readings (page " + meterPage + ")...", "info");
+      try {
+        const url = meterApiBase + "?page=" + meterPage + "&pageSize=" + meterPageSize;
+        const res = await fetch(url);
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        const data = await res.json();
+        const rows = data.data || [];
+        meterBody.innerHTML = "";
+        if (!rows.length) {
+          const tr = document.createElement("tr");
+          const td = document.createElement("td");
+          td.colSpan = 7;
+          td.textContent = "No data on this page.";
+          tr.appendChild(td);
+          meterBody.appendChild(tr);
+        } else {
+          rows.forEach(r => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+              <td>${r.Uid ?? ""}</td>
+              <td>${r.ReferenceNo ?? ""}</td>
+              <td>${r.ConsumerName ?? ""}</td>
+              <td>${r.MeterNo ?? ""}</td>
+              <td>${r.BillingMonth ?? ""}</td>
+              <td>${r.BillingYear ?? ""}</td>
+              <td>${r.Project ?? ""}</td>
+            `;
+            meterBody.appendChild(tr);
+          });
+        }
+        meterPageLabel.textContent = "Page " + data.page + " of " + data.totalPages;
+        setMeterStatus("Loaded " + rows.length + " rows.", "success");
+        meterPrev.disabled = meterPage <= 1;
+        meterNext.disabled = !data.hasNextPage;
+      } catch (err) {
+        console.error(err);
+        setMeterStatus("Failed to load meter readings: " + err.message, "error");
+      }
+    }
+
+    meterPrev.addEventListener("click", () => {
+      if (meterPage > 1) {
+        meterPage--;
+        loadMeter();
+      }
+    });
+    meterNext.addEventListener("click", () => {
+      meterPage++;
+      loadMeter();
+    });
+
+    // ─── MultiValueConfigurations view (uses /api/multivalueconfigurations) ─
+    const mvApi = originBase + "/api/multivalueconfigurations";
+    const mvStatus = document.getElementById("mv-status");
+    const mvBody = document.getElementById("mv-body");
+    const mvForm = document.getElementById("mv-form");
+    const mvKey = document.getElementById("mv-key");
+    const mvValue = document.getElementById("mv-value");
+    const mvSaveBtn = document.getElementById("mv-save-btn");
+    const mvResetBtn = document.getElementById("mv-reset-btn");
+
+    function setMvStatus(msg, type = "info") {
+      mvStatus.textContent = msg;
+      mvStatus.className = "status " + type;
+    }
+
+    function clearMvForm() {
+      mvKey.value = "";
+      mvValue.value = "";
+    }
+
+    async function loadMv() {
+      setMvStatus("Loading configuration entries...", "info");
+      try {
+        const res = await fetch(mvApi);
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        const data = await res.json();
+        mvBody.innerHTML = "";
+        if (!data.length) {
+          const tr = document.createElement("tr");
+          const td = document.createElement("td");
+          td.colSpan = 3;
+          td.textContent = "No configuration rows found.";
+          tr.appendChild(td);
+          mvBody.appendChild(tr);
+        } else {
+          data.forEach(row => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+              <td>${row.uid ?? row.Uid ?? ""}</td>
+              <td>${row.configKey ?? row.ConfigKey ?? ""}</td>
+              <td>${row.configValue ?? row.ConfigValue ?? ""}</td>
+            `;
+            mvBody.appendChild(tr);
+          });
+        }
+        setMvStatus("Loaded " + data.length + " configuration rows.", "success");
+      } catch (err) {
+        console.error(err);
+        setMvStatus("Failed to load configuration rows: " + err.message, "error");
+      }
+    }
+
+    mvForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const payload = {
+        configKey: mvKey.value.trim(),
+        configValue: mvValue.value
+      };
+      if (!payload.configKey || !payload.configValue) {
+        setMvStatus("ConfigKey and ConfigValue are required.", "error");
+        return;
+      }
+      try {
+        setMvStatus("Saving configuration...", "info");
+        const res = await fetch(mvApi, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        if (!res.ok) {
+          const text = await res.text();
+          throw new Error("HTTP " + res.status + " - " + text);
+        }
+        clearMvForm();
+        await loadMv();
+        setMvStatus("Configuration saved.", "success");
+      } catch (err) {
+        console.error(err);
+        setMvStatus("Failed to save configuration: " + err.message, "error");
+      }
+    });
+
+    mvResetBtn.addEventListener("click", () => {
+      clearMvForm();
+      setMvStatus("Form reset.", "info");
+    });
+
+    // Initial loads
+    clearOpsForm();
+    loadOps();
+    loadMeter();
+    loadMv();
+  </script>
+</body>
+</html>
+
